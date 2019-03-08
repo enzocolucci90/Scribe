@@ -20,77 +20,105 @@ public class MainActivity extends AppCompatActivity {
     final String MAGENTO_API_KEY = "7m07ajz79bjrb75n1n9c44i2vac8v29s";
     final String MAGENTO_API_SECRET = "fa5j85uh772va0we72fvrdwpmokizi39";
     final String MAGENTO_REST_API_URL = "http://bazarfaidate.it/api/rest/";
-
+    private String verifierCode = "92igkamng0wwi4hl53n5uzj23pvcis7c";
     private static Token requestToken;
     private OAuthService service;
+
+    private boolean fai = false;
+    private boolean faiChiamata = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (fai) {
 // To override error of execution of network thread on the main thread
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        try {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            try {
 
-            service = new ServiceBuilder()
-                    .provider(MagentoThreeLeggedOAuth.class)
-                    .apiKey(MAGENTO_API_KEY)
-                    .apiSecret(MAGENTO_API_SECRET)
-                    .debug()
-                    .build();
+                service = new ServiceBuilder()
+                        .provider(MagentoThreeLeggedOAuth.class)
+                        .apiKey(MAGENTO_API_KEY)
+                        .apiSecret(MAGENTO_API_SECRET)
+                        .debug()
+                        .build();
 
-            System.out.println("Magento'srkflow");
-            System.out.println();
+                System.out.println("Magento'srkflow");
+                System.out.println();
 
-            // Obtain the Request Token
-            System.out.println("FetchingRequest Token...");
-            requestToken = service.getRequestToken();
-            System.out.println("GotRequest Token!");
-            System.out.println();
+                // Obtain the Request Token
+                System.out.println("FetchingRequest Token...");
+                requestToken = service.getRequestToken();
+                System.out.println("GotRequest Token!");
+                System.out.println();
 
-            System.out.println("FetchingAuthorization URL...");
-            String authorizationUrl = service.getAuthorizationUrl(requestToken);
-            Log.d("DEBUG", authorizationUrl);
-            System.out.println("GotAuthorization URL!");
-            System.out.println("Nownd authorize Main here:");
-            System.out.println(authorizationUrl);
-            System.out.println("Ande the authorization code here");
-            System.out.print(">>");
+                System.out.println("FetchingAuthorization URL...");
+                String authorizationUrl = service.getAuthorizationUrl(requestToken);
+                Log.d("DEBUG", authorizationUrl);
+                System.out.println("GotAuthorization URL!");
+                System.out.println("Nownd authorize Main here:");
+                System.out.println(authorizationUrl);
+                System.out.println("Ande the authorization code here");
+                System.out.print(">>");
 
-            String verifierCode = ((EditText) findViewById(R.id.editText)).getText().toString();
-            Log.d("DEBUG", verifierCode);
-            Verifier verifier = new Verifier(verifierCode);
-            System.out.println();
-            System.out.println("TradingRequest Token for an Access Token...");
-            Token accessToken = service.getAccessToken(requestToken, verifier);
-            System.out.println("GotAccess Token!");
-            System.out.println("(if curious it looks like this: "
-                    + accessToken + " )");
-            System.out.println();
-
-            OAuthRequest request = new OAuthRequest(Verb.GET, MAGENTO_REST_API_URL + "/products?limit=2");
-            service.signRequest(accessToken, request);
-            Response response = request.send();
-            System.out.println();
-            System.out.println(response.getCode());
-            System.out.println(response.getBody());
-            System.out.println();
+                Log.d("DEBUG", verifierCode);
+                Verifier verifier = new Verifier(verifierCode);
+                System.out.println();
+                System.out.println("TradingRequest Token for an Access Token...");
+                Token accessToken = service.getAccessToken(requestToken, verifier);
+                System.out.println("GotAccess Token!");
+                System.out.println("(if curious it looks like this: "
+                        + accessToken + " )");
+                System.out.println();
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                    OAuthRequest request = new OAuthRequest(Verb.GET, MAGENTO_REST_API_URL + "/products?limit=2");
+                    service.signRequest(accessToken, request);
+                    Response response = request.send();
+                    System.out.println();
+                    System.out.println(response.getCode());
+                    System.out.println(response.getBody());
+                    System.out.println();
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
+        chiamata();
 
 
     }
 
+    public void chiamata() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        service = new ServiceBuilder()
+                .provider(MagentoThreeLeggedOAuth.class)
+                .apiKey(MAGENTO_API_KEY)
+                .apiSecret(MAGENTO_API_SECRET)
+                .debug()
+                .build();
+        Token accessToken = new Token("6xk7px3oaxnnr25qfvwnw7gx0abdqg9q","dyou322edir4whxoa2z3vtvsvulft68l","sfd");
+        OAuthRequest request = new OAuthRequest(Verb.GET, MAGENTO_REST_API_URL + "products?limit=2");
+        service.signRequest(accessToken, request);
+        request.getOauthParameters().put("oauth_signature","dyou322edir4whxoa2z3vtvsvulft68l");
+        request.getOauthParameters().put("oauth_consumer_secret",MAGENTO_API_SECRET);
+        Response response = request.send();
+        System.out.println();
+        System.out.println(response.getCode());
+        System.out.println(response.getBody());
+        System.out.println();
+    }
 
 
     public static final class MagentoThreeLeggedOAuth extends DefaultApi10a {
-        private static final String BASE_URL = "http://bazarfaidate.it/index.php/admin0bft/";
+        //        private static final String BASE_URL = "http://bazarfaidate.it/index.php/admin0bft/";
+        private static final String BASE_URL = "http://bazarfaidate.it/";
 
         @Override
         public String getRequestTokenEndpoint() {
